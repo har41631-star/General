@@ -1,0 +1,8 @@
+node_modules/
+.remotion-tmp/
+out/*
+!out/bridge_short_1080.mp4
+audio/_cache/
+audio/*.wav
+audio/__pycache__/
+__pycache__/

@@ -1,0 +1,247 @@
+{
+ "voice": "af_heart",
+ "phrases": [
+  {
+   "text": "Seventy-four soldiers knocked down an iron bridge just by walking across it.",
+   "start": 0.2,
+   "end": 4.189,
+   "slot": [
+    0.2,
+    4.25
+   ],
+   "speed": 1.246,
+   "overrun": 0
+  },
+  {
+   "text": "It's eighteen thirty-one, and the brand new bridge over the river is the pride of the whole town.",
+   "start": 4.55,
+   "end": 9.243,
+   "slot": [
+    4.55,
+    9.3
+   ],
+   "speed": 1.189,
+   "overrun": 0
+  },
+  {
+   "text": "The men are marching home four across, every boot hitting the planks at the exact same moment.",
+   "start": 9.6,
+   "end": 14.699,
+   "slot": [
+    9.6,
+    14.7
+   ],
+   "speed": 1.08,
+   "overrun": 0
+  },
+  {
+   "text": "Halfway over, the bridge starts bouncing under their feet.",
+   "start": 14.95,
+   "end": 17.574,
+   "slot": [
+    14.95,
+    17.6
+   ],
+   "speed": 1.206,
+   "overrun": 0
+  },
+  {
+   "text": "A normal person would slow down,",
+   "start": 17.7,
+   "end": 19.343,
+   "slot": [
+    17.7,
+    19.35
+   ],
+   "speed": 1.23,
+   "overrun": 0
+  },
+  {
+   "text": "but these guys think it's hilarious.",
+   "start": 19.45,
+   "end": 21.242,
+   "slot": [
+    19.45,
+    21.38
+   ],
+   "speed": 1.08,
+   "overrun": 0
+  },
+  {
+   "text": "Somebody starts whistling a marching tune,",
+   "start": 21.55,
+   "end": 23.534,
+   "slot": [
+    21.55,
+    23.55
+   ],
+   "speed": 1.267,
+   "overrun": 0
+  },
+  {
+   "text": "and the whole column stomps along to it, a little harder every step.",
+   "start": 23.65,
+   "end": 27.149,
+   "slot": [
+    23.65,
+    27.35
+   ],
+   "speed": 1.08,
+   "overrun": 0
+  },
+  {
+   "text": "The bounce gets bigger, the chains start groaning,",
+   "start": 27.55,
+   "end": 29.918,
+   "slot": [
+    27.55,
+    29.95
+   ],
+   "speed": 1.188,
+   "overrun": 0
+  },
+  {
+   "text": "and nobody wants to be the one who breaks step.",
+   "start": 30.15,
+   "end": 32.433,
+   "slot": [
+    30.15,
+    32.8
+   ],
+   "speed": 1.08,
+   "overrun": 0
+  },
+  {
+   "text": "Then,",
+   "start": 33.0,
+   "end": 33.597,
+   "slot": [
+    33.0,
+    33.6
+   ],
+   "speed": 1.08,
+   "overrun": 0
+  },
+  {
+   "text": "a single bolt snaps,",
+   "start": 33.733,
+   "end": 34.8,
+   "slot": [
+    33.7,
+    34.8
+   ],
+   "speed": 1.32,
+   "overrun": 0
+  },
+  {
+   "text": "and the whole end of the bridge drops into the river.",
+   "start": 34.95,
+   "end": 37.361,
+   "slot": [
+    34.95,
+    37.65
+   ],
+   "speed": 1.08,
+   "overrun": 0
+  },
+  {
+   "text": "Luckily, the river was only two feet deep.",
+   "start": 38.0,
+   "end": 40.197,
+   "slot": [
+    38.0,
+    40.25
+   ],
+   "speed": 1.107,
+   "overrun": 0
+  },
+  {
+   "text": "Unluckily, the river was only two feet deep.",
+   "start": 40.55,
+   "end": 42.939,
+   "slot": [
+    40.55,
+    43.3
+   ],
+   "speed": 1.08,
+   "overrun": 0
+  },
+  {
+   "text": "You see, every bridge has a rhythm it naturally likes to sway at.",
+   "start": 43.6,
+   "end": 46.885,
+   "slot": [
+    43.6,
+    46.9
+   ],
+   "speed": 1.114,
+   "overrun": 0
+  },
+  {
+   "text": "Ever pushed a kid on a swing?",
+   "start": 47.15,
+   "end": 48.622,
+   "slot": [
+    47.15,
+    48.65
+   ],
+   "speed": 1.08,
+   "overrun": 0
+  },
+  {
+   "text": "Each push is tiny, but if they all land at just the right moment, the swing goes higher and higher.",
+   "start": 48.85,
+   "end": 53.778,
+   "slot": [
+    48.85,
+    53.9
+   ],
+   "speed": 1.222,
+   "overrun": 0
+  },
+  {
+   "text": "Seventy-four men stepping together were pushing that bridge like a swing.",
+   "start": 54.15,
+   "end": 57.67,
+   "slot": [
+    54.15,
+    57.7
+   ],
+   "speed": 1.167,
+   "overrun": 0
+  },
+  {
+   "text": "Nobody died, but the army made a rule:",
+   "start": 57.85,
+   "end": 59.941,
+   "slot": [
+    57.85,
+    59.95
+   ],
+   "speed": 1.249,
+   "overrun": 0
+  },
+  {
+   "text": "never cross a bridge in step.",
+   "start": 60.414,
+   "end": 61.95,
+   "slot": [
+    60.05,
+    61.95
+   ],
+   "speed": 1.08,
+   "overrun": 0
+  },
+  {
+   "text": "So now, the best drilled soldiers in the world cross every bridge like a crowd of tourists.",
+   "start": 62.3,
+   "end": 67.185,
+   "slot": [
+    62.3,
+    67.2
+   ],
+   "speed": 1.08,
+   "overrun": 0
+  }
+ ]
+}
