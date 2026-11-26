@@ -8,10 +8,12 @@ import numpy as np
 import soundfile as sf
 from scipy.signal import butter, sosfilt
 
+import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BUILD = sys.argv[sys.argv.index("--build") + 1] if "--build" in sys.argv else "build"
 SR = 48000
-T = json.load(open(os.path.join(ROOT, "build/timings.json")))
-CUES = json.load(open(os.path.join(ROOT, "build/cues.json")))
+T = json.load(open(os.path.join(ROOT, BUILD, "timings.json")))
+CUES = json.load(open(os.path.join(ROOT, BUILD, "cues.json")))
 DUR = T["duration"]
 N = int(DUR * SR) + SR
 rng = np.random.default_rng(3)
@@ -328,11 +330,11 @@ def sfx_track():
         elif k == "stamp":
             add(S, thump(70, 0.35), t, 0.6 * g)
         elif k == "fail":
-            add(S, error_tone(), t, 0.45)
-            add(S, boom(1.6), t, 0.6)
+            add(S, error_tone(), t, 0.2)
+            add(S, boom(1.6), t, 0.4)
         elif k == "pass":
-            add(S, success(), t, 0.32)
-            add(S, boom(1.4), t, 0.28)
+            add(S, success(), t, 0.22)
+            add(S, boom(1.4), t, 0.22)
         elif k == "boom":
             add(S, boom(1.2), t, 0.6 * g)
         elif k == "ding":
@@ -350,13 +352,13 @@ def sfx_track():
             fail_t = cue_t("fail")[0]["t"]
             r0 = fail_t + 0.35
             add(S, riser(t + 0.12 - r0), r0, 0.28)
-            add(S, boom(1.0), t + 0.12, 0.3)
+            add(S, boom(1.0), t + 0.12, 0.2)
     return S
 
 
 def load_vo():
-    tmp = os.path.join(ROOT, "build", "vo48.wav")
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", os.path.join(ROOT, "audio/vo.wav"), "-ar", str(SR), "-ac", "1", tmp], check=True)
+    tmp = os.path.join(ROOT, BUILD, "vo48.wav")
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", (os.path.join(ROOT, BUILD, "vo.wav") if os.path.exists(os.path.join(ROOT, BUILD, "vo.wav")) else os.path.join(ROOT, "audio/vo.wav")), "-ar", str(SR), "-ac", "1", tmp], check=True)
     v, _ = sf.read(tmp)
     out = np.zeros(N)
     out[: min(N, len(v))] = v[:N]
@@ -383,14 +385,16 @@ if __name__ == "__main__":
     venv = envelope(vo)
     duck = 1 - 0.6 * np.clip(venv / 0.05, 0, 1)
     duck = lp(duck, 8, 1)
-    sf.write(os.path.join(ROOT, "audio/music.wav"), mus, SR)
-    sf.write(os.path.join(ROOT, "audio/sfx.wav"), sfx, SR)
+    sf.write(os.path.join(ROOT, BUILD, "music.wav"), mus, SR)
+    sf.write(os.path.join(ROOT, BUILD, "sfx.wav"), sfx, SR)
     L = int(DUR * SR)
-    m_vo = mus[:L] * (0.30 * duck[:L])[:, None] + (sfx[:L] * 0.7)[:, None] + (vo[:L] * 1.0)[:, None]
+    sduck = 1 - 0.5 * np.clip(venv / 0.05, 0, 1)
+    sduck = lp(sduck, 20, 1)
+    m_vo = mus[:L] * (0.30 * duck[:L])[:, None] + (sfx[:L] * 0.7 * sduck[:L])[:, None] + (vo[:L] * 1.0)[:, None]
     m_novo = mus[:L] * 0.5 + (sfx[:L] * 0.9)[:, None]
     for name, m in (("mix", m_vo), ("mix_novo", m_novo)):
         m = np.tanh(m * 1.1) / np.tanh(1.1)
-        sf.write(os.path.join(ROOT, f"build/{name}_raw.wav"), m.astype(np.float32), SR)
-        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", os.path.join(ROOT, f"build/{name}_raw.wav"),
-                        "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-ar", str(SR), os.path.join(ROOT, f"audio/{name}.wav")], check=True)
+        sf.write(os.path.join(ROOT, BUILD, f"{name}_raw.wav"), m.astype(np.float32), SR)
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", os.path.join(ROOT, BUILD, f"{name}_raw.wav"),
+                        "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-ar", str(SR), os.path.join(ROOT, BUILD, f"{name}.wav")], check=True)
     print("audio ok", DUR)

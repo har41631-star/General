@@ -12,9 +12,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ap = argparse.ArgumentParser()
 ap.add_argument("--voice")
 ap.add_argument("--models", default=os.environ.get("KOKORO_DIR", ""))
+ap.add_argument("--script", default="script.json")
+ap.add_argument("--build", default="build")
 args = ap.parse_args()
 
-cfg = json.load(open(os.path.join(ROOT, "script.json")))
+cfg = json.load(open(os.path.join(ROOT, args.script)))
 voice = args.voice or cfg["voice"]
 mdir = args.models
 k = Kokoro(os.path.join(mdir, "kokoro-v1.0.onnx"), os.path.join(mdir, "voices-v1.0.bin"))
@@ -101,18 +103,42 @@ def align(toks, audio):
             c += d
 
 
-out_audio = [np.zeros(int(cfg["lead_in"] * SR), dtype=np.float32)]
-t = cfg["lead_in"]
+def synth(spoken, speed):
+    audio, sr = k.create(spoken, voice=voice, speed=float(np.clip(speed, 0.5, 2.0)), lang="en-us")
+    assert sr == SR
+    return audio.astype(np.float32)
+
+
+timed = "at" in cfg["lines"][0]
+out_audio = []
+t = 0.0 if timed else cfg["lead_in"]
+if not timed:
+    out_audio.append(np.zeros(int(cfg["lead_in"] * SR), dtype=np.float32))
 lines = []
 for line in cfg["lines"]:
-    if line["gap"]:
-        out_audio.append(np.zeros(int(line["gap"] * SR), dtype=np.float32))
-        t += line["gap"]
     toks = parse(line["text"])
     spoken = " ".join(tk["say"] for tk in toks)
-    audio, sr = k.create(spoken, voice=voice, speed=cfg["speed"], lang="en-us")
-    assert sr == SR
-    audio = audio.astype(np.float32)
+    if timed:
+        if line["at"] < t - 1e-3:
+            print(f"  ! {line['id']} overlaps previous line by {t - line['at']:.2f}s")
+        else:
+            out_audio.append(np.zeros(int(round((line["at"] - t) * SR)), dtype=np.float32))
+            t = line["at"]
+        target = line["end"] - line["at"]
+        speed = cfg["speed"]
+        audio = synth(spoken, speed)
+        for _ in range(3):  # fit the line into the reference slot
+            d = len(audio) / SR
+            if abs(d - target) < 0.04:
+                break
+            speed = float(np.clip(speed * d / target, 0.9, 1.6))
+            audio = synth(spoken, speed)
+        line["_speed"] = round(speed, 2)
+    else:
+        if line["gap"]:
+            out_audio.append(np.zeros(int(line["gap"] * SR), dtype=np.float32))
+            t += line["gap"]
+        audio = synth(spoken, cfg["speed"])
     dur = len(audio) / SR
     align(toks, audio)
     for tk in toks:
@@ -122,14 +148,22 @@ for line in cfg["lines"]:
                                   t0=tk["t0"], t1=tk["t1"]) for tk in toks]))
     out_audio.append(audio)
     t += dur
-    print(f"{line['id']:6s} {lines[-1]['t0']:6.2f} -> {lines[-1]['t1']:6.2f}  {spoken}")
+    extra = f"  (slot {line['at']:.2f}-{line['end']:.2f}, speed {line['_speed']})" if timed else ""
+    print(f"{line['id']:6s} {lines[-1]['t0']:6.2f} -> {lines[-1]['t1']:6.2f}{extra}  {spoken}")
 
-out_audio.append(np.zeros(int(cfg["tail"] * SR), dtype=np.float32))
-t += cfg["tail"]
+if timed:
+    out_audio.append(np.zeros(int(round((cfg["duration"] - t) * SR)), dtype=np.float32))
+    t = cfg["duration"]
+else:
+    out_audio.append(np.zeros(int(cfg["tail"] * SR), dtype=np.float32))
+    t += cfg["tail"]
 vo = np.concatenate(out_audio)
-os.makedirs(os.path.join(ROOT, "audio"), exist_ok=True)
-os.makedirs(os.path.join(ROOT, "build"), exist_ok=True)
-sf.write(os.path.join(ROOT, "audio", "vo.wav"), vo, SR)
+bdir = os.path.join(ROOT, args.build)
+os.makedirs(bdir, exist_ok=True)
+sf.write(os.path.join(bdir, "vo.wav"), vo, SR)
+if args.build == "build":
+    os.makedirs(os.path.join(ROOT, "audio"), exist_ok=True)
+    sf.write(os.path.join(ROOT, "audio", "vo.wav"), vo, SR)
 json.dump(dict(duration=round(t, 3), voice=voice, lines=lines),
-          open(os.path.join(ROOT, "build", "timings.json"), "w"), indent=1)
+          open(os.path.join(bdir, "timings.json"), "w"), indent=1)
 print("total", round(t, 2), "s")

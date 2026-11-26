@@ -11,9 +11,11 @@ const FPS = 30;
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
 
-const timings = fs.readFileSync(path.join(ROOT, 'build/timings.json'), 'utf8');
-fs.writeFileSync(path.join(ROOT, 'build/timings.js'), 'window.TIMINGS = ' + timings + ';\n');
-const url = 'file://' + path.join(ROOT, 'comp/index.html');
+const COMP = opt('--comp', 'comp');
+const BUILD = opt('--build', 'build');
+const timings = fs.readFileSync(path.join(ROOT, BUILD, 'timings.json'), 'utf8');
+fs.writeFileSync(path.join(ROOT, BUILD, 'timings.js'), 'window.TIMINGS = ' + timings + ';\n');
+const url = 'file://' + path.join(ROOT, COMP, 'index.html');
 
 async function openPage(browser) {
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
@@ -28,7 +30,7 @@ async function openPage(browser) {
   const browser = await chromium.launch({ args: ['--allow-file-access-from-files'] });
   const preview = opt('--preview');
   if (preview) {
-    const dir = path.join(ROOT, 'build/preview');
+    const dir = path.join(ROOT, BUILD, 'preview');
     fs.mkdirSync(dir, { recursive: true });
     const page = await openPage(browser);
     for (const t of preview.split(',').map(Number)) {
@@ -41,10 +43,10 @@ async function openPage(browser) {
   const page0 = await openPage(browser);
   const dur = await page0.evaluate(() => window.__duration);
   const cues = await page0.evaluate(() => window.__cues);
-  fs.writeFileSync(path.join(ROOT, 'build/cues.json'), JSON.stringify(cues, null, 1));
+  fs.writeFileSync(path.join(ROOT, BUILD, 'cues.json'), JSON.stringify(cues, null, 1));
   const total = Math.round(dur * FPS);
   const workers = +opt('--workers', 4);
-  const dir = path.join(ROOT, 'build/frames');
+  const dir = path.join(ROOT, BUILD, 'frames');
   fs.rmSync(dir, { recursive: true, force: true });
   fs.mkdirSync(dir, { recursive: true });
   const pages = [page0];
@@ -61,6 +63,6 @@ async function openPage(browser) {
   await browser.close();
   execFileSync('ffmpeg', ['-y', '-v', 'error', '-framerate', String(FPS), '-i', path.join(dir, 'f%05d.jpg'),
     '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
-    path.join(ROOT, 'build/video.mp4')], { stdio: 'inherit' });
+    path.join(ROOT, BUILD, 'video.mp4')], { stdio: 'inherit' });
   console.log('video done', total, 'frames');
 })();

@@ -1,0 +1,134 @@
+{
+  "voice": "af_heart",
+  "speed": 1.15,
+  "duration": 35.4,
+  "note": "Each line starts at 'at' and is sped up/slowed to end near 'end' - these are the reference video's caption timings.",
+  "lines": [
+    {
+      "id": "hook",
+      "at": 0.3,
+      "end": 3.25,
+      "text": "Everyone's telling you to | *clip* *long* *videos* | with *AI*."
+    },
+    {
+      "id": "fail",
+      "at": 3.4,
+      "end": 4.65,
+      "text": "Nobody shows you the | *setup*."
+    },
+    {
+      "id": "mine",
+      "at": 4.8,
+      "end": 7.05,
+      "text": "Here's *mine*, | from zero to this | *clip*."
+    },
+    {
+      "id": "s1",
+      "at": 7.2,
+      "end": 7.85,
+      "text": "Step *one*."
+    },
+    {
+      "id": "open",
+      "at": 8.2,
+      "end": 11.05,
+      "text": "Open *Onyx* *Clip* and | *paste* in | your *YouTube* *link*."
+    },
+    {
+      "id": "check",
+      "at": 11.2,
+      "end": 13.2,
+      "text": "It checks everything and | pulls the *transcript*."
+    },
+    {
+      "id": "s2",
+      "at": 13.4,
+      "end": 14.05,
+      "text": "Step *two*."
+    },
+    {
+      "id": "hunt",
+      "at": 14.2,
+      "end": 15.05,
+      "text": "It hunts for *moments*."
+    },
+    {
+      "id": "five",
+      "at": 15.25,
+      "end": 15.9,
+      "text": "*5* kinds."
+    },
+    {
+      "id": "k1",
+      "at": 16.0,
+      "end": 16.5,
+      "text": "*Funny*."
+    },
+    {
+      "id": "k2",
+      "at": 16.6,
+      "end": 17.3,
+      "text": "*Emotional*."
+    },
+    {
+      "id": "k3",
+      "at": 17.4,
+      "end": 17.95,
+      "text": "*Hype*."
+    },
+    {
+      "id": "k45",
+      "at": 18.0,
+      "end": 19.5,
+      "text": "*Banter* | and *big* *payoffs*."
+    },
+    {
+      "id": "s3",
+      "at": 19.8,
+      "end": 20.5,
+      "text": "Step *three*."
+    },
+    {
+      "id": "watch",
+      "at": 20.8,
+      "end": 23.1,
+      "text": "*Start* it, | and it watches the *whole* | *video* at once,"
+    },
+    {
+      "id": "read",
+      "at": 23.2,
+      "end": 24.6,
+      "text": "reading *every* *word* in | the transcript."
+    },
+    {
+      "id": "s4",
+      "at": 24.8,
+      "end": 25.55,
+      "text": "Step *four*."
+    },
+    {
+      "id": "spike",
+      "at": 25.8,
+      "end": 28.6,
+      "text": "When a moment *explodes*, | it *scores* the moment | and *edits* it."
+    },
+    {
+      "id": "made",
+      "at": 28.8,
+      "end": 31.45,
+      "text": "This *one* it made | at five past *9*{nine} | this morning, | while I was at | *work*."
+    },
+    {
+      "id": "pass",
+      "at": 31.75,
+      "end": 32.6,
+      "text": "*Mission* *passed*."
+    },
+    {
+      "id": "bio",
+      "at": 32.8,
+      "end": 34.2,
+      "text": "Onyx Clip's *linked* in | my *bio*."
+    }
+  ]
+}
