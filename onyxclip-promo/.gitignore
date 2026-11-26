@@ -1,0 +1,5 @@
+node_modules/
+build/
+audio/*.wav
+!audio/vo.wav
+__pycache__/

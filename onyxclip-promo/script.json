@@ -1,0 +1,19 @@
+{
+  "voice": "af_heart",
+  "speed": 1.08,
+  "lead_in": 0.35,
+  "tail": 2.6,
+  "lines": [
+    { "id": "hook",  "gap": 0.0,  "text": "Everyone's telling you | to start *clipping*." },
+    { "id": "fail",  "gap": 0.25, "text": "Nobody tells you | you'll *scrub* for an hour | and close the *tab*." },
+    { "id": "route", "gap": 0.9,  "text": "Here's *my* route. | One video, | *four* steps." },
+    { "id": "s1",    "gap": 0.35, "text": "Step *one*. | Paste the *link*." },
+    { "id": "s2",    "gap": 0.45, "text": "Step *two*. | It watches the whole thing | and reads every *line*." },
+    { "id": "s3",    "gap": 0.45, "text": "Step *three*. | Every moment gets | a *virality* score," },
+    { "id": "s3b",   "gap": 0.1,  "text": "*best* *first*." },
+    { "id": "s4",    "gap": 0.5,  "text": "Step *four*. | Cut it *vertical*, | *captions* on, | ready to *post*." },
+    { "id": "pay",   "gap": 0.45, "text": "*Nine* clips | from one video. | I never opened | an *editor*." },
+    { "id": "pass",  "gap": 0.45, "text": "*Mission* *passed*." },
+    { "id": "cta",   "gap": 0.6,  "text": "Two *free* videos | every month. | *onyxclip.com*{Onyx Clip dot com}" }
+  ]
+}

@@ -1,0 +1,259 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>OnyxClip promo</title>
+<style>
+@font-face { font-family: "InterX"; font-style: italic; font-weight: 900; src: url(../node_modules/@fontsource/inter/files/inter-latin-900-italic.woff2) format("woff2"); }
+@font-face { font-family: "InterX"; font-style: italic; font-weight: 800; src: url(../node_modules/@fontsource/inter/files/inter-latin-800-italic.woff2) format("woff2"); }
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 100 900; font-stretch: 62% 125%; src: url(../node_modules/@fontsource-variable/archivo/files/archivo-latin-standard-normal.woff2) format("woff2"); }
+:root {
+  --accent: #4f86ff;
+  --accent-2: #9dbbff;
+  --glow: rgba(79,134,255,.55);
+  --red: #ff3d57;
+  --yellow: #ffd83d;
+  --green: #3ddc84;
+  --ink: #f3f5f9;
+  --dim: #8a93a6;
+  --panel-b: #243047;
+  --mono: "JetBrains Mono", monospace;
+  --sans: "Inter", sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #06080c; }
+body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
+#stage { position: absolute; inset: 0; overflow: hidden; perspective: 1700px; perspective-origin: 540px 960px; background: #06080c; }
+#world { position: absolute; left: 0; top: 0; width: 3600px; height: 4000px; transform-origin: 0 0; transform-style: preserve-3d; }
+#world canvas, #world svg { position: absolute; left: 0; top: 0; }
+.layer { position: absolute; inset: 0; pointer-events: none; }
+#vignette { background: radial-gradient(ellipse 75% 60% at 50% 48%, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 80%, rgba(0,0,0,.85) 100%); }
+#tint { background: radial-gradient(ellipse at 50% 50%, rgba(255,40,70,0) 45%, rgba(255,40,70,.28) 100%); opacity: 0; }
+#flash { background: #fff; opacity: 0; mix-blend-mode: overlay; }
+#grain { opacity: .07; mix-blend-mode: overlay; }
+
+/* HUD */
+#progress { position: absolute; left: 0; top: 0; height: 7px; width: 0; background: var(--accent); box-shadow: 0 0 18px var(--glow); }
+#handle { position: absolute; left: 44px; top: 34px; display: flex; align-items: center; gap: 14px; font: 600 25px var(--mono); color: #d5dbe7; }
+.avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font: 800 22px "Archivo"; font-stretch: 125%; box-shadow: 0 0 20px var(--glow); }
+#brandtag { position: absolute; right: 44px; top: 46px; font: 600 20px var(--mono); letter-spacing: .22em; color: #737d92; }
+#mission { position: absolute; left: 44px; right: 44px; top: 104px; height: 120px; }
+#mission .lbl { font: 700 19px var(--mono); letter-spacing: .22em; color: var(--accent); }
+#mission .lbl i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: var(--accent); margin-right: 10px; box-shadow: 0 0 12px var(--glow); font-style: normal; }
+#mission .ttl { font: 800 42px var(--sans); letter-spacing: -.01em; margin-top: 8px; }
+#mission .step { position: absolute; right: 0; top: 0; text-align: right; }
+#mission .step .k { font: 700 18px var(--mono); letter-spacing: .22em; color: #7c869b; }
+#mission .step .n { font: 900 66px var(--sans); color: var(--accent); line-height: 1; margin-top: 4px; text-shadow: 0 0 24px var(--glow); }
+#mission .dashes { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+#mission .dashes span { width: 34px; height: 6px; border-radius: 3px; background: #2a3243; }
+#mission .dashes span.on { background: var(--accent); box-shadow: 0 0 10px var(--glow); }
+
+/* captions */
+#captions { position: absolute; left: 50px; right: 50px; top: 1450px; height: 120px; }
+.chunk { position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0 18px; font: 800 64px var(--sans); letter-spacing: -.01em; text-shadow: 0 4px 18px rgba(0,0,0,.85); opacity: 0; }
+.word { display: inline-block; color: rgba(255,255,255,.3); transform-origin: 50% 60%; white-space: nowrap; }
+.word.on { color: #fff; }
+.word.key { padding: 0 12px; border-radius: 14px; border: 3px solid transparent; }
+.word.key.on { color: var(--accent-2); border-color: var(--accent); background: rgba(79,134,255,.2); box-shadow: 0 0 26px rgba(79,134,255,.35); text-shadow: 0 0 18px rgba(79,134,255,.5); }
+
+/* big mission text */
+.big { position: absolute; left: 0; right: 0; text-align: center; opacity: 0; }
+.big .t { font: italic 900 108px "InterX"; letter-spacing: -.03em; color: var(--accent); text-shadow: 0 0 50px var(--glow), 0 8px 0 rgba(0,0,0,.55); white-space: nowrap; }
+.big .s { font: 700 26px var(--mono); letter-spacing: .42em; color: #c6cfe0; margin-top: 10px; opacity: .85; }
+.big.red .t { color: var(--red); text-shadow: 0 0 50px rgba(255,61,87,.6), 0 8px 0 rgba(0,0,0,.55); }
+
+/* panels */
+.panel { position: absolute; background: linear-gradient(180deg, rgba(19,23,33,.97), rgba(10,13,19,.97)); border: 2px solid var(--panel-b); border-radius: 28px; box-shadow: 0 40px 90px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.03) inset; overflow: hidden; opacity: 0; }
+.bar { height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 24px; border-bottom: 1.5px solid #1b2232; font: 500 21px var(--mono); color: #7d879b; }
+.bar .d { display: flex; gap: 9px; margin-right: 8px; }
+.bar .d span { width: 13px; height: 13px; border-radius: 50%; background: #ff5f57; }
+.bar .d span:nth-child(2) { background: #febc2e; }
+.bar .d span:nth-child(3) { background: #28c840; }
+.mono { font-family: var(--mono); }
+.onyx-h { font-family: "Archivo"; font-weight: 800; font-stretch: 125%; letter-spacing: -.01em; }
+.btn-white { display: inline-flex; align-items: center; gap: 12px; background: #eef0f4; color: #0b0d12; border-radius: 16px; font: 700 28px var(--sans); padding: 20px 34px; box-shadow: 0 10px 30px rgba(0,0,0,.4), inset 0 -3px 0 rgba(0,0,0,.12); }
+.pill { display: inline-flex; align-items: center; gap: 10px; border-radius: 999px; font: 700 20px var(--sans); padding: 8px 18px; }
+.pill.ready { background: rgba(61,220,132,.14); color: var(--green); border: 1.5px solid rgba(61,220,132,.35); }
+.pill.ready i { width: 10px; height: 10px; border-radius: 50%; background: var(--green); }
+.pill.top { border: 2px solid var(--accent); color: var(--accent-2); background: rgba(79,134,255,.14); font-size: 17px; padding: 4px 12px; border-radius: 9px; }
+.score { width: 56px; height: 56px; border-radius: 50%; background: #eef0f4; color: #0b0d12; display: grid; place-items: center; font: 800 24px var(--sans); box-shadow: 0 0 0 4px rgba(255,255,255,.08); }
+.play { position: absolute; width: 23%; aspect-ratio: 1; border-radius: 50%; left: 50%; top: 77%; transform: translate(-50%,-50%); background: rgba(20,22,28,.78); display: grid; place-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.4); }
+.play::after { content: ""; border-left: 15px solid #fff; border-top: 10px solid transparent; border-bottom: 10px solid transparent; margin-left: 5px; transform: scale(var(--ps, 1)); }
+.play.white { background: #f3f4f6; }
+.play.white::after { border-left-color: #0b0d12; }
+
+/* clip card (vertical clip as OnyxClip renders it) */
+.clip { position: absolute; overflow: hidden; background: #000; }
+.clip .bg { position: absolute; inset: -12%; background-size: cover; background-position: center; filter: blur(22px) brightness(.55) saturate(1.1); }
+.clip .strip { position: absolute; left: 0; right: 0; background-size: cover; background-position: center; }
+.clip .wm { position: absolute; left: 0; right: 0; text-align: center; font-weight: 700; color: rgba(255,255,255,.85); }
+.clip .ttl { position: absolute; left: 6%; right: 6%; text-align: center; font-weight: 800; line-height: 1.15; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
+.clip .cap { position: absolute; left: 4%; right: 4%; text-align: center; font-weight: 800; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.8); }
+.clip .cap b { color: var(--yellow); }
+
+/* hook cards */
+.vcard { position: absolute; width: 330px; border-radius: 20px; overflow: hidden; border: 2px solid #2b3448; background: #0c0f15; box-shadow: 0 24px 60px rgba(0,0,0,.6); opacity: 0; }
+.vcard .img { width: 100%; height: 184px; background-size: cover; background-position: center; position: relative; }
+.vcard .img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.1), rgba(0,0,0,.45)); }
+.vcard .dur { position: absolute; right: 10px; bottom: 10px; z-index: 2; background: rgba(0,0,0,.78); font: 700 18px var(--mono); padding: 3px 9px; border-radius: 7px; }
+.vcard .chip { position: absolute; left: 10px; top: 10px; z-index: 2; background: rgba(79,134,255,.9); font: 700 16px var(--mono); padding: 3px 10px; border-radius: 7px; letter-spacing: .06em; }
+.vcard .meta { padding: 10px 14px 12px; font: 600 19px var(--sans); color: #c9d0dc; }
+.vcard .meta span { display: block; height: 10px; border-radius: 5px; background: #222a39; margin-top: 8px; width: 70%; }
+
+/* checklist */
+.chk { display: flex; align-items: center; gap: 14px; height: 62px; padding: 0 22px; border-radius: 14px; border: 2px solid #2a3346; font: 700 22px var(--mono); letter-spacing: .06em; color: #6f7a8f; background: rgba(10,13,19,.9); margin-bottom: 14px; width: 440px; }
+.chk .b { width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid #4a5468; display: grid; place-items: center; font-size: 18px; color: transparent; }
+.chk.on { border-color: var(--accent); color: #fff; box-shadow: 0 0 22px rgba(79,134,255,.25); }
+.chk.on .b { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.stamp { position: absolute; font: italic 900 64px "InterX"; color: #fff; background: var(--red); padding: 10px 30px; border-radius: 16px; box-shadow: 0 16px 40px rgba(255,61,87,.4); white-space: nowrap; opacity: 0; }
+.tagpill { position: absolute; font: 800 26px var(--sans); color: #0b0d12; background: var(--accent-2); padding: 10px 22px; border-radius: 12px; white-space: nowrap; opacity: 0; box-shadow: 0 12px 30px rgba(79,134,255,.35); }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="world">
+    <canvas id="map" width="3600" height="4000"></canvas>
+    <svg id="routesvg" width="3600" height="4000" viewBox="0 0 3600 4000"></svg>
+  </div>
+
+  <div class="layer" id="vignette"></div>
+  <div class="layer" id="tint"></div>
+
+  <!-- HOOK -->
+  <div class="layer" id="hook"></div>
+  <div class="big" id="bigFirst" style="top:700px"><div class="t">YOUR FIRST CLIPS</div><div class="s">MISSION · 1 VIDEO · 4 STEPS</div></div>
+  <div id="hookPlay" style="position:absolute;left:480px;top:930px;width:120px;height:120px;border-radius:50%;border:5px solid var(--accent);box-shadow:0 0 30px var(--glow);display:grid;place-items:center;opacity:0;background:rgba(79,134,255,.12)">
+    <div style="border-left:34px solid var(--accent);border-top:21px solid transparent;border-bottom:21px solid transparent;margin-left:10px"></div>
+  </div>
+
+  <!-- FAIL: scrubbing player -->
+  <div class="panel" id="p0" style="left:60px;top:440px;width:960px;height:660px">
+    <div class="bar"><div class="d"><span></span><span></span><span></span></div>youtube.com · full video</div>
+    <div id="p0img" style="position:absolute;left:0;top:56px;width:960px;height:516px;background-size:cover;background-position:center;filter:brightness(.8)"></div>
+    <div id="p0scrub" style="position:absolute;left:28px;top:470px;font:800 30px var(--mono);color:var(--red);text-shadow:0 2px 10px #000">SCRUBBED <span id="p0time">0:00:00</span></div>
+    <div style="position:absolute;left:30px;right:30px;top:604px;height:10px;border-radius:5px;background:#2a3142"></div>
+    <div id="p0fill" style="position:absolute;left:30px;top:604px;height:10px;border-radius:5px;background:var(--red);width:0"></div>
+    <div id="p0head" style="position:absolute;left:30px;top:597px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 0 0 5px rgba(255,61,87,.5)"></div>
+    <div class="mono" style="position:absolute;left:30px;top:626px;font-size:18px;color:#7d879b">0:00</div>
+    <div class="mono" style="position:absolute;right:30px;top:626px;font-size:18px;color:#7d879b">HOURS OF VIDEO</div>
+  </div>
+  <div class="stamp" id="tabClosed" style="left:240px;top:700px">✕ TAB CLOSED</div>
+  <div class="big red" id="bigFail" style="top:800px"><div class="t">MISSION FAILED</div><div class="s">NOBODY SHOWS THE ROUTE</div></div>
+
+  <!-- STEP 1: paste the link -->
+  <div class="panel" id="p1" style="left:60px;top:450px;width:960px;height:720px">
+    <div class="bar"><div class="d"><span></span><span></span><span></span></div>onyxclip.com · new video</div>
+    <div style="position:absolute;left:50px;top:100px;right:50px">
+      <div class="onyx-h" style="font-size:62px">New video</div>
+      <div style="font:500 27px var(--sans);color:#aab2c2;margin-top:12px">Paste a link. Onyx finds the best moments.</div>
+      <div id="p1input" style="margin-top:40px;height:96px;border-radius:20px;border:2px solid #2c3549;background:#0a0d13;display:flex;align-items:center;padding:0 28px;gap:18px;font:500 30px var(--mono);color:#e6eaf2">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#7d879b" stroke-width="2.2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+        <span id="p1url"></span><span id="p1caret" style="width:3px;height:38px;background:var(--accent);margin-left:-14px"></span>
+        <span id="p1ph" style="color:#4d566a">Paste a YouTube link</span>
+      </div>
+      <div id="p1prev" style="margin-top:26px;display:flex;gap:22px;align-items:center;opacity:0">
+        <div style="width:200px;height:112px;border-radius:14px;background:url(../assets/foot1.jpg) center/cover;flex:none"></div>
+        <div><div style="font:700 30px var(--sans)">N3on Trains MMA With Anshul Jubli!</div><div class="mono" style="font-size:21px;color:#7d879b;margin-top:8px">youtube.com · ready to clip</div></div>
+      </div>
+      <div style="margin-top:36px;display:flex;align-items:center;gap:24px">
+        <div class="btn-white" id="p1btn">+ Make clips</div>
+        <div class="pill ready" id="p1proc" style="opacity:0;font-size:22px"><i></i>Finding moments…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: watch + read -->
+  <div class="panel" id="p2" style="left:50px;top:420px;width:980px;height:900px">
+    <div class="bar"><div class="d"><span></span><span></span><span></span></div>onyxclip.com · reading video</div>
+    <div class="mono" style="position:absolute;left:44px;top:92px;font-size:20px;letter-spacing:.18em;color:#7d879b">WHOLE VIDEO</div>
+    <div class="mono" style="position:absolute;right:44px;top:92px;font-size:20px;letter-spacing:.12em;color:var(--accent-2)">SCANNED <span id="p2pct">0</span>%</div>
+    <svg id="p2wave" style="position:absolute;left:44px;top:170px" width="892" height="130"></svg>
+    <div style="position:absolute;left:44px;top:322px;font:900 104px var(--sans);color:var(--accent);text-shadow:0 0 30px var(--glow);line-height:1" id="p2count">0</div>
+    <div class="mono" style="position:absolute;left:44px;top:432px;font-size:20px;letter-spacing:.18em;color:#9aa3b5">MOMENTS FOUND</div>
+    <div class="mono" style="position:absolute;right:44px;top:340px;width:520px;text-align:right;font-size:20px;color:#7d879b;line-height:1.6">every word transcribed<br>every moment checked</div>
+    <div style="position:absolute;left:30px;right:30px;top:480px;height:2px;background:#1b2232"></div>
+    <div class="mono" style="position:absolute;left:44px;top:500px;font-size:18px;letter-spacing:.18em;color:#5f697d">TRANSCRIPT</div>
+    <div id="p2lines" style="position:absolute;left:30px;right:30px;top:540px;height:340px;overflow:hidden"></div>
+  </div>
+
+  <!-- STEP 3: virality score -->
+  <div class="panel" id="p3" style="left:50px;top:400px;width:980px;height:560px">
+    <div class="bar"><div class="d"><span></span><span></span><span></span></div>onyxclip.com · virality score</div>
+    <div class="mono" style="position:absolute;left:40px;top:84px;font-size:18px;letter-spacing:.18em;color:#7d879b">SCORE PER MOMENT · WHOLE VIDEO</div>
+    <svg id="p3chart" style="position:absolute;left:30px;top:120px" width="920" height="300"></svg>
+    <div style="position:absolute;left:40px;top:432px;display:flex;align-items:center;gap:22px">
+      <div class="score" id="p3score" style="width:96px;height:96px;font-size:44px">0</div>
+      <div>
+        <div style="display:flex;align-items:center;gap:14px"><span style="font:600 26px var(--sans);color:#c5ccd8">Virality score</span><span class="pill top" id="p3top" style="opacity:0">Top clip</span></div>
+        <div style="font:500 21px var(--sans);color:#7d879b;margin-top:8px">Funny misunderstanding with a punchline</div>
+      </div>
+    </div>
+  </div>
+  <div id="p3rows" style="position:absolute;left:50px;top:0;width:980px;height:0"></div>
+  <div class="mono" id="p3sortlbl" style="position:absolute;left:50px;top:1000px;font-size:19px;letter-spacing:.2em;color:var(--accent-2);opacity:0">SORTED · BEST FIRST</div>
+
+  <!-- STEP 4: cut vertical -->
+  <div class="panel" id="p4raw" style="left:44px;top:470px;width:470px;height:322px">
+    <div class="bar" style="height:50px;font-size:18px"><div class="d"><span></span><span></span><span></span></div>the moment · raw</div>
+    <div style="position:absolute;left:0;top:50px;width:470px;height:272px;background:url(../assets/foot1.jpg) center/cover"></div>
+    <div class="mono" style="position:absolute;left:14px;bottom:12px;background:rgba(0,0,0,.75);padding:3px 10px;border-radius:7px;font-size:18px">04:40</div>
+  </div>
+  <svg id="p4arrow" style="position:absolute;left:518px;top:600px;opacity:0" width="64" height="60" viewBox="0 0 64 60"><path d="M4 30 H50 M34 12 L54 30 L34 48" stroke="var(--accent)" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div id="p4checks" style="position:absolute;left:44px;top:850px">
+    <div class="chk" id="chk1"><span class="b">✓</span>CUT TO VERTICAL</div>
+    <div class="chk" id="chk2"><span class="b">✓</span>CAPTIONS ON</div>
+    <div class="chk" id="chk3"><span class="b">✓</span>READY TO POST</div>
+  </div>
+  <div id="p4phone" style="position:absolute;left:592px;top:352px;width:444px;height:790px;opacity:0"></div>
+  <div class="tagpill" id="p4ready" style="left:648px;top:1160px">✓ READY TO POST</div>
+
+  <!-- PAYOFF: Your 9 clips -->
+  <div class="panel" id="p5" style="left:28px;top:300px;width:1024px;height:1080px">
+    <div class="bar"><div class="d"><span></span><span></span><span></span></div>onyxclip.com/projects</div>
+    <div style="position:absolute;left:40px;top:88px"><span class="pill ready"><i></i>Ready</span></div>
+    <div class="onyx-h" style="position:absolute;left:40px;top:140px;font-size:74px">Your <span id="p5n">9</span> clips</div>
+    <div style="position:absolute;left:40px;top:240px;font:500 25px var(--sans);color:#c2c9d6;line-height:1.45">N3on Trains MMA With Anshul Jubli!<br><span style="color:#8a93a6">Sorted by virality score, best first.</span></div>
+    <div class="btn-white" id="p5dl" style="position:absolute;right:40px;top:150px;font-size:25px;padding:18px 28px">Download all</div>
+    <div id="p5toast" style="position:absolute;right:40px;top:240px;opacity:0" class="pill ready">✓ 9 clips downloaded</div>
+    <div id="p5grid" style="position:absolute;left:40px;top:350px;width:944px;height:700px"></div>
+  </div>
+  <svg id="cursor" style="position:absolute;left:0;top:0;opacity:0;filter:drop-shadow(0 4px 8px rgba(0,0,0,.6))" width="44" height="54" viewBox="0 0 22 27"><path d="M1 1 L1 22 L6.5 16.8 L10 25 L13.5 23.5 L10 15.5 L17.5 15.5 Z" fill="#fff" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  <div class="tagpill" id="p5stamp" style="left:250px;top:1316px;background:var(--accent);color:#fff;font-size:28px">MADE WITH ONYX · ZERO EDITING</div>
+
+  <!-- PASS + CTA -->
+  <div class="big" id="bigPass" style="top:800px"><div class="t">MISSION PASSED</div><div class="s">FIRST CLIPS · 4/4</div></div>
+  <div class="panel" id="cta" style="left:130px;top:990px;width:820px;height:330px;border-color:#2d3a56">
+    <div style="position:absolute;left:44px;top:40px;display:flex;align-items:center;gap:20px">
+      <div class="avatar" style="width:72px;height:72px;font-size:34px">O</div>
+      <div class="onyx-h" style="font-size:48px">Onyx</div>
+      <div style="font:700 20px var(--sans);background:#2a3140;color:#c9d0dc;border-radius:9px;padding:4px 12px">Beta</div>
+    </div>
+    <div id="ctaLink" style="position:absolute;left:44px;right:44px;top:140px;height:92px;border-radius:20px;border:3px solid var(--accent);background:rgba(79,134,255,.1);display:flex;align-items:center;gap:18px;padding:0 26px;box-shadow:0 0 30px rgba(79,134,255,.3)">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#c9d6ff" stroke-width="2.2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+      <div style="font:800 38px var(--sans);flex:1">onyxclip.com</div>
+      <div id="ctaFree" style="font:900 22px var(--sans);background:var(--green);color:#04210f;border-radius:10px;padding:6px 14px">FREE</div>
+    </div>
+    <div class="mono" style="position:absolute;left:0;right:0;top:262px;text-align:center;font-size:21px;letter-spacing:.3em;color:#8a93a6">2 FREE VIDEOS EVERY MONTH</div>
+  </div>
+  <div class="mono" id="ctaBio" style="position:absolute;left:0;right:0;top:1346px;text-align:center;font-size:22px;letter-spacing:.4em;color:#6f7a8f;opacity:0">LINK IN BIO</div>
+
+  <!-- HUD -->
+  <div id="progress"></div>
+  <div id="handle"><div class="avatar">O</div>@onyxclip</div>
+  <div id="brandtag">ONYX CLIP</div>
+  <div id="mission" style="opacity:0">
+    <div class="lbl"><i></i>MISSION</div>
+    <div class="ttl">YOUR FIRST CLIPS</div>
+    <div class="step"><div class="k" id="stepk">STEP</div><div class="n" id="stepn">0/4</div><div class="dashes"><span></span><span></span><span></span><span></span></div></div>
+  </div>
+
+  <div id="captions"></div>
+  <canvas class="layer" id="grain" width="540" height="960" style="width:1080px;height:1920px"></canvas>
+  <div class="layer" id="flash"></div>
+</div>
+<script src="../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="../build/timings.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
