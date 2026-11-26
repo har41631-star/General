@@ -6,3 +6,6 @@ audio/_cache/
 audio/*.wav
 audio/__pycache__/
 __pycache__/
+!out/grades_short_1080.mp4
+!out/grades_short_1080_novoice.mp4
+grades/audio/
